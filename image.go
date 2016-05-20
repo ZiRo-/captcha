@@ -54,7 +54,7 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	y := m.rng.Int(border, maxy-border)
 	// Draw digits.
 	for _, n := range digits {
-		m.drawDigit(font[n], x, y)
+		m.drawDigit(getChar(n), x, y)
 		x += m.numWidth + m.dotSize
 	}
 	// Draw strike-through line.

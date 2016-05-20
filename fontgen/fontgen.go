@@ -18,6 +18,7 @@ import (
 var thresh int = 200;
 
 var font = flag.String("font", "Monospace", "Font name")
+var size = flag.String("size", "30", "Font size")
 
 func main() {
 	flag.Parse()
@@ -84,7 +85,7 @@ func convertImage(file io.Reader) []byte {
 
 func genChar(char rune) []byte {
 	c := fmt.Sprintf("%c", char)
-	cmd := genImage(c, *font)
+	cmd := genImage(c, *size, *font)
 	
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -102,8 +103,8 @@ func genChar(char rune) []byte {
 	return a
 }
 
-func genImage(letter, font string) *exec.Cmd {
-	return exec.Command("convert", "-size", "11x18", "-background", "white", "-fill", "black", "-filter", "Point", "-font", font, "-gravity", "center", "label:"+letter, "gif:-")
+func genImage(letter, size, font string) *exec.Cmd {
+	return exec.Command("convert", "-size", "20x20", "-pointsize", size, "-background", "white", "-fill", "black", "-filter", "Point", "-font", font, "-gravity", "center", "label:"+letter, "gif:-")
 }
 
 func usage() {
