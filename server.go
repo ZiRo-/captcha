@@ -53,9 +53,6 @@ func (h *captchaHandler) serve(w http.ResponseWriter, r *http.Request, id, ext, 
 	case ".png":
 		w.Header().Set("Content-Type", "image/png")
 		WriteImage(&content, id, h.imgWidth, h.imgHeight)
-	case ".wav":
-		w.Header().Set("Content-Type", "audio/x-wav")
-		WriteAudio(&content, id, lang)
 	default:
 		return ErrNotFound
 	}
