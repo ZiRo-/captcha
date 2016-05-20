@@ -46,9 +46,9 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	maxy := height - m.numHeight - m.dotSize*2
 	var border int
 	if width > height {
-		border = height / 5
+		border = height / 10
 	} else {
-		border = width / 5
+		border = width / 10
 	}
 	x := m.rng.Int(border, maxx-border)
 	y := m.rng.Int(border, maxy-border)
@@ -105,9 +105,9 @@ func (m *Image) calculateSizes(width, height, ncount int) {
 	// Goal: fit all digits inside the image.
 	var border int
 	if width > height {
-		border = height / 4
+		border = height / 8
 	} else {
-		border = width / 4
+		border = width / 8
 	}
 	// Convert everything to floats for calculations.
 	w := float64(width - border*2)
@@ -128,7 +128,7 @@ func (m *Image) calculateSizes(width, height, ncount int) {
 		nw = fw / fh * nh
 	}
 	// Calculate dot size.
-	m.dotSize = int(nh / fh)
+	m.dotSize = int((nh / fh)*1.05)
 	if m.dotSize < 1 {
 		m.dotSize = 1
 	}
