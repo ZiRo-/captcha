@@ -189,25 +189,25 @@ func (m *Image) colorDistortCircle(xc, yc, r int) {
 	d := 2*r
 	r2 := r*r
 	
-	dg := int(m.rng.Intn(240)) - 120
+	dg := int(m.rng.Intn(120)) - 60
 	if dg < 0 {
-		dg -= 20
+		dg -= 10
 	} else {
-		dg += 20
+		dg += 10
 	}
 	
-	dr := int(m.rng.Intn(240)) - 120
+	dr := int(m.rng.Intn(120)) - 60
 	if dr < 0 {
-		dr -= 20
+		dr -= 10
 	} else {
-		dr += 20
+		dr += 10
 	}
 	
-	db := int(m.rng.Intn(240)) - 120
+	db := int(m.rng.Intn(120)) - 60
 	if db < 0 {
-		db -= 20
+		db -= 10
 	} else {
-		db += 20
+		db += 10
 	}
 	
 	for y := 0; y <= d; y++ {
