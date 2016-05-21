@@ -32,7 +32,7 @@ type Image struct {
 	rng       siprng
 }
 
-var background color.Color = color.RGBA{128, 128, 128, 0xFF}
+var background color.Color = color.RGBA{144, 144, 144, 0xFF}
 
 // NewImage returns a new captcha image of the given width and height with the
 // given digits, where each digit must be in range 0-9.
@@ -294,12 +294,19 @@ func (m *Image) drawDigit(digit []byte, x, y int, color color.Color) {
 func (m *Image) distort(amplude float64, period float64) {
 	w := m.Bounds().Max.X
 	h := m.Bounds().Max.Y
+	r32,g32,b32,_ := background.RGBA()
+	r:=uint8(r32)
+	g:=uint8(g32)
+	b:=uint8(b32)
+	dbg := 32.0/float32(w);
 
 	oldm := m
 	newm := image.NewRGBA(image.Rect(0, 0, w, h))
 
 	dx := 2.0 * math.Pi / period
 	for x := 0; x < w; x++ {
+		dbgx:=uint8(float32(x)*dbg)
+		bg:=color.RGBA{r-dbgx, g-dbgx, b-dbgx, 0xFF}
 		for y := 0; y < h; y++ {
 			xo := amplude * math.Sin(float64(y)*dx)
 			yo := amplude * math.Cos(float64(x)*dx)
@@ -307,7 +314,7 @@ func (m *Image) distort(amplude float64, period float64) {
 			newm.Set(x, y, c)
 			_,_,_, a := c.RGBA()
 			if a == 0x00 {
-				newm.Set(x, y, background)
+				newm.Set(x, y, bg)
 			}
 		}
 	}
