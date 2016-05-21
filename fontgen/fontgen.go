@@ -104,7 +104,7 @@ func genChar(char rune) []byte {
 }
 
 func genImage(letter, size, font string) *exec.Cmd {
-	return exec.Command("convert", "-size", "20x20", "-pointsize", size, "-background", "white", "-fill", "black", "-filter", "Point", "-font", font, "-gravity", "center", "label:"+letter, "gif:-")
+	return exec.Command("convert", "-size", "15x25", "-pointsize", size, "-background", "white", "-fill", "black", "-filter", "Point", "-font", font, "-gravity", "center", "label:"+letter, "gif:-")
 }
 
 func usage() {

@@ -128,7 +128,7 @@ func (m *Image) calculateSizes(width, height, ncount int) {
 		nw = fw / fh * nh
 	}
 	// Calculate dot size.
-	m.dotSize = int((nh / fh)*1.05)
+	m.dotSize = int((nh / fh))
 	if m.dotSize < 1 {
 		m.dotSize = 1
 	}

@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	fontWidth  = 20
-	fontHeight = 20
+	fontWidth  = 15
+	fontHeight = 25
 	blackChar  = 1
 )
 
