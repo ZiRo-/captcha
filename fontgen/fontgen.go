@@ -1,21 +1,20 @@
 package main
 
 import (
-	"os"
-	"os/exec"
 	"encoding/gob"
+	"flag"
 	"fmt"
 	"image"
-	"flag"
-	"log"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
-	 _ "image/gif"
-	 _ "image/png"
-	 _ "image/jpeg"
+	"log"
+	"os"
+	"os/exec"
 )
 
-
-var thresh int = 200;
+var thresh int = 200
 
 var font = flag.String("font", "Monospace", "Font name")
 var size = flag.String("size", "30", "Font size")
@@ -28,35 +27,34 @@ func main() {
 		os.Exit(1)
 	}
 	fm := make(map[rune][]byte)
-	
+
 	for c := '0'; c <= '9'; c++ {
-		fm[c]=genChar(c)
+		fm[c] = genChar(c)
 	}
 	for c := 'a'; c <= 'z'; c++ {
-		fm[c]=genChar(c)
+		fm[c] = genChar(c)
 	}
 	for c := 'A'; c <= 'Z'; c++ {
-		fm[c]=genChar(c)
+		fm[c] = genChar(c)
 	}
-	
+
 	file, err := os.Create(fname)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	enc := gob.NewEncoder(file)
 	err = enc.Encode(fm)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	file.Close()
 }
 
-
 func convertImage(file io.Reader) []byte {
 	m, _, err := image.Decode(file)
-	
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,20 +62,20 @@ func convertImage(file io.Reader) []byte {
 	xp := bounds.Max.X - bounds.Min.X
 	yp := bounds.Max.Y - bounds.Min.Y
 	a := make([]byte, yp*xp)
-	
+
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			col := m.At(x, y)
 			r, g, b, _ := col.RGBA()
 			gr := (299*r + 587*g + 114*b + 500) / 1000
-			gr>>=8
-			
+			gr >>= 8
+
 			px := 0
 			if int(gr) <= thresh {
-				px =1
+				px = 1
 			}
-			idx := xp* (y-bounds.Min.Y) + x-bounds.Min.X
-			a[idx]=byte(px)
+			idx := xp*(y-bounds.Min.Y) + x - bounds.Min.X
+			a[idx] = byte(px)
 		}
 	}
 	return a
@@ -86,7 +84,7 @@ func convertImage(file io.Reader) []byte {
 func genChar(char rune) []byte {
 	c := fmt.Sprintf("%c", char)
 	cmd := genImage(c, *size, *font)
-	
+
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
@@ -94,9 +92,9 @@ func genChar(char rune) []byte {
 	if err := cmd.Start(); err != nil {
 		log.Fatal(err)
 	}
-	
+
 	a := convertImage(stdout)
-	
+
 	if err := cmd.Wait(); err != nil {
 		log.Fatal(err)
 	}

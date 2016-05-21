@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	flagLen   = flag.Int("len", captcha.DefaultLen, "length of captcha")
-	flagImgW  = flag.Int("width", captcha.StdWidth, "image captcha width")
-	flagImgH  = flag.Int("height", captcha.StdHeight, "image captcha height")
-	fontFile  = flag.String("ff", "Monospace.gob", "font file")
+	flagLen  = flag.Int("len", captcha.DefaultLen, "length of captcha")
+	flagImgW = flag.Int("width", captcha.StdWidth, "image captcha width")
+	flagImgH = flag.Int("height", captcha.StdHeight, "image captcha height")
+	fontFile = flag.String("ff", "Monospace.gob", "font file")
 )
 
 func usage() {
@@ -33,13 +33,13 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
-	
+
 	fn, err := captcha.LoadFontFromFile(*fontFile)
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
 	captcha.AddFont("font", fn)
-	
+
 	f, err := os.Create(fname)
 	if err != nil {
 		log.Fatalf("%s", err)
@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
-	for _, c := range(d) {
+	for _, c := range d {
 		fmt.Printf("%c", captcha.Digit2Rune(c))
 	}
 	fmt.Println()

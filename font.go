@@ -22,7 +22,7 @@ var selectedFont string
 
 func LoadFontFromFile(fname string) (Font, error) {
 	f := make(map[rune][]byte)
-	
+
 	file, err := os.Open(fname)
 	if err != nil {
 		return f, err
@@ -33,7 +33,7 @@ func LoadFontFromFile(fname string) (Font, error) {
 }
 
 func AddFont(name string, f Font) {
-	fonts[name]=f
+	fonts[name] = f
 	if len(fonts) == 1 {
 		SelectFont(name)
 	}
@@ -42,34 +42,33 @@ func AddFont(name string, f Font) {
 func SelectFont(name string) {
 	_, ok := fonts[name]
 	if ok {
-		selectedFont=name
+		selectedFont = name
 	}
 }
 
 func Digit2Rune(d byte) rune {
 	switch {
-		case 0 <= d && d <= 9:
-			return rune(d) + '0'
-		case 10 <= d && d <= 10 + byte('z'-'a'):
-			return rune(d)+'a'- 10
-		case 11 + byte('z'-'a') <= d && d <= 11 + byte('z'-'a') + byte('Z'-'A'):
-			return rune(d) - 'z' +'a' +'A' - 11
+	case 0 <= d && d <= 9:
+		return rune(d) + '0'
+	case 10 <= d && d <= 10+byte('z'-'a'):
+		return rune(d) + 'a' - 10
+	case 11+byte('z'-'a') <= d && d <= 11+byte('z'-'a')+byte('Z'-'A'):
+		return rune(d) - 'z' + 'a' + 'A' - 11
 	}
 	return 0
 }
 
 func Rune2Digit(c rune) byte {
 	switch {
-		case '0' <= c && c <= '9':
-			return byte(c - '0')
-		case 'a' <= c && c <= 'z':
-			return byte(c - 'a' + 10)
-		case 'A' <= c && c <= 'Z':
-			return byte(c - 'A' + 'z' -'a' + 11)
+	case '0' <= c && c <= '9':
+		return byte(c - '0')
+	case 'a' <= c && c <= 'z':
+		return byte(c - 'a' + 10)
+	case 'A' <= c && c <= 'Z':
+		return byte(c - 'A' + 'z' - 'a' + 11)
 	}
 	return 0
 }
-
 
 func getChar(d byte) []byte {
 	if selectedFont == "" {
@@ -78,5 +77,3 @@ func getChar(d byte) []byte {
 	r := Digit2Rune(d)
 	return fonts[selectedFont][r]
 }
-
-
