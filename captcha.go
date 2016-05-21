@@ -138,7 +138,7 @@ func VerifyString(id string, digits string) bool {
 		return false
 	}
 	ns := make([]byte, len(digits))
-	for i, d := range ns {
+	for i, d := range digits {
 		ns[i] = Rune2Digit(d)
 	}
 	return Verify(id, ns)
