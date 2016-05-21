@@ -21,7 +21,7 @@ const (
 	maxSkew = 0.7
 	// Number of background circles.
 	circleCount = 20
-	distortCircleCount = 20
+	distortCircleCount = 10
 )
 
 type Image struct {
