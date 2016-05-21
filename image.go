@@ -21,10 +21,11 @@ const (
 	maxSkew = 0.7
 	// Number of background circles.
 	circleCount = 20
+	distortCircleCount = 20
 )
 
 type Image struct {
-	*image.Paletted
+	*image.RGBA
 	numWidth  int
 	numHeight int
 	dotSize   int
@@ -38,8 +39,15 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 
 	// Initialize PRNG.
 	m.rng.Seed(deriveSeed(imageSeedPurpose, id, digits))
+	
+	prim := color.RGBA{
+		uint8(m.rng.Intn(129)),
+		uint8(m.rng.Intn(129)),
+		uint8(m.rng.Intn(129)),
+		0xFF,
+	}
 
-	m.Paletted = image.NewPaletted(image.Rect(0, 0, width, height), m.getRandomPalette())
+	m.RGBA = image.NewRGBA(image.Rect(0, 0, width, height))
 	m.calculateSizes(width, height, len(digits))
 	// Randomly position captcha inside the image.
 	maxx := width - (m.numWidth+m.dotSize)*len(digits) - m.dotSize
@@ -54,11 +62,13 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	y := m.rng.Int(border, maxy-border)
 	// Draw digits.
 	for _, n := range digits {
-		m.drawDigit(getChar(n), x, y)
+		m.drawDigit(getChar(n), x, y, prim)
 		x += m.numWidth + m.dotSize
 	}
 	// Draw strike-through line.
-	m.strikeThrough()
+	m.strikeThrough(prim)
+	
+	m.fillWithDistortCircles(distortCircleCount, width/4)
 	// Apply wave distortion.
 	m.distort(m.rng.Float(5, 10), m.rng.Float(100, 200))
 	// Fill image with random circles.
@@ -66,6 +76,7 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	return m
 }
 
+/*
 func (m *Image) getRandomPalette() color.Palette {
 	p := make([]color.Color, circleCount+1)
 	// Transparent color.
@@ -83,13 +94,13 @@ func (m *Image) getRandomPalette() color.Palette {
 		p[i] = m.randomBrightness(prim, 255)
 	}
 	return p
-}
+}*/
 
 // encodedPNG encodes an image to PNG and returns
 // the result as a byte slice.
 func (m *Image) encodedPNG() []byte {
 	var buf bytes.Buffer
-	if err := png.Encode(&buf, m.Paletted); err != nil {
+	if err := png.Encode(&buf, m); err != nil {
 		panic(err.Error())
 	}
 	return buf.Bytes()
@@ -138,22 +149,22 @@ func (m *Image) calculateSizes(width, height, ncount int) {
 	m.numHeight = int(nh)
 }
 
-func (m *Image) drawHorizLine(fromX, toX, y int, colorIdx uint8) {
+func (m *Image) drawHorizLine(fromX, toX, y int, color color.Color) {
 	for x := fromX; x <= toX; x++ {
-		m.SetColorIndex(x, y, colorIdx)
+		m.Set(x, y, color)
 	}
 }
 
-func (m *Image) drawCircle(x, y, radius int, colorIdx uint8) {
+func (m *Image) drawCircle(x, y, radius int, color color.Color) {
 	f := 1 - radius
 	dfx := 1
 	dfy := -2 * radius
 	xo := 0
 	yo := radius
 
-	m.SetColorIndex(x, y+radius, colorIdx)
-	m.SetColorIndex(x, y-radius, colorIdx)
-	m.drawHorizLine(x-radius, x+radius, y, colorIdx)
+	m.Set(x, y+radius, color)
+	m.Set(x, y-radius, color)
+	m.drawHorizLine(x-radius, x+radius, y, color)
 
 	for xo < yo {
 		if f >= 0 {
@@ -164,24 +175,87 @@ func (m *Image) drawCircle(x, y, radius int, colorIdx uint8) {
 		xo++
 		dfx += 2
 		f += dfx
-		m.drawHorizLine(x-xo, x+xo, y+yo, colorIdx)
-		m.drawHorizLine(x-xo, x+xo, y-yo, colorIdx)
-		m.drawHorizLine(x-yo, x+yo, y+xo, colorIdx)
-		m.drawHorizLine(x-yo, x+yo, y-xo, colorIdx)
+		m.drawHorizLine(x-xo, x+xo, y+yo, color)
+		m.drawHorizLine(x-xo, x+xo, y-yo, color)
+		m.drawHorizLine(x-yo, x+yo, y+xo, color)
+		m.drawHorizLine(x-yo, x+yo, y-xo, color)
 	}
 }
+
+
+func (m *Image) colorDistortCircle(xc, yc, r int) {
+	d := 2*r
+	r2 := r*r
+	
+	dg := int(m.rng.Intn(240)) - 120
+	if dg < 0 {
+		dg -= 20
+	} else {
+		dg += 20
+	}
+	
+	dr := int(m.rng.Intn(240)) - 120
+	if dr < 0 {
+		dr -= 20
+	} else {
+		dr += 20
+	}
+	
+	db := int(m.rng.Intn(240)) - 120
+	if db < 0 {
+		db -= 20
+	} else {
+		db += 20
+	}
+	
+	for y := 0; y <= d; y++ {
+		for x := 0; x <= d; x++ {
+			x2 := (x-r)*(x-r)
+			y2 := (y-r)*(y-r)
+			
+			if x2+y2 <= r2 {
+				xp := xc - r + x
+				yp := yc - r + y
+				r,g,b,a := m.At(xp, yp).RGBA()
+				if a != 0x00 { //background
+					m.Set(xp, yp, color.RGBA{
+						uint8(int(r)+dr),
+						uint8(int(g)+dg),
+						uint8(int(b)+db),
+						0xFF,
+					})
+				}
+			}
+		}
+	}
+}
+
 
 func (m *Image) fillWithCircles(n, maxradius int) {
 	maxx := m.Bounds().Max.X
 	maxy := m.Bounds().Max.Y
 	for i := 0; i < n; i++ {
-		colorIdx := uint8(m.rng.Int(1, circleCount-1))
+		color := color.RGBA{
+			uint8(m.rng.Intn(129)),
+			uint8(m.rng.Intn(129)),
+			uint8(m.rng.Intn(129)),
+			0xFF,
+		}
 		r := m.rng.Int(1, maxradius)
-		m.drawCircle(m.rng.Int(r, maxx-r), m.rng.Int(r, maxy-r), r, colorIdx)
+		m.drawCircle(m.rng.Int(r, maxx-r), m.rng.Int(r, maxy-r), r, color)
 	}
 }
 
-func (m *Image) strikeThrough() {
+func (m *Image) fillWithDistortCircles(n, maxradius int) {
+	maxx := m.Bounds().Max.X
+	maxy := m.Bounds().Max.Y
+	for i := 0; i < n; i++ {
+		r := m.rng.Int(maxradius/10, maxradius-1)
+		m.colorDistortCircle(m.rng.Int(-r, maxx), m.rng.Int(-r, maxy), r)
+	}
+}
+
+func (m *Image) strikeThrough(color color.Color) {
 	maxx := m.Bounds().Max.X
 	maxy := m.Bounds().Max.Y
 	y := m.rng.Int(maxy/3, maxy-maxy/3)
@@ -193,12 +267,12 @@ func (m *Image) strikeThrough() {
 		yo := amplitude * math.Sin(float64(x)*dx)
 		for yn := 0; yn < m.dotSize; yn++ {
 			r := m.rng.Int(0, m.dotSize)
-			m.drawCircle(x+int(xo), y+int(yo)+(yn*m.dotSize), r/2, 1)
+			m.drawCircle(x+int(xo), y+int(yo)+(yn*m.dotSize), r/2, color)
 		}
 	}
 }
 
-func (m *Image) drawDigit(digit []byte, x, y int) {
+func (m *Image) drawDigit(digit []byte, x, y int, color color.Color) {
 	skf := m.rng.Float(-maxSkew, maxSkew)
 	xs := float64(x)
 	r := m.dotSize / 2
@@ -208,7 +282,7 @@ func (m *Image) drawDigit(digit []byte, x, y int) {
 			if digit[yo*fontWidth+xo] != blackChar {
 				continue
 			}
-			m.drawCircle(x+xo*m.dotSize, y+yo*m.dotSize, r, 1)
+			m.drawCircle(x+xo*m.dotSize, y+yo*m.dotSize, r, color)
 		}
 		xs += skf
 		x = int(xs)
@@ -219,18 +293,18 @@ func (m *Image) distort(amplude float64, period float64) {
 	w := m.Bounds().Max.X
 	h := m.Bounds().Max.Y
 
-	oldm := m.Paletted
-	newm := image.NewPaletted(image.Rect(0, 0, w, h), oldm.Palette)
+	oldm := m
+	newm := image.NewRGBA(image.Rect(0, 0, w, h))
 
 	dx := 2.0 * math.Pi / period
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
 			xo := amplude * math.Sin(float64(y)*dx)
 			yo := amplude * math.Cos(float64(x)*dx)
-			newm.SetColorIndex(x, y, oldm.ColorIndexAt(x+int(xo), y+int(yo)))
+			newm.Set(x, y, oldm.At(x+int(xo), y+int(yo)))
 		}
 	}
-	m.Paletted = newm
+	m.RGBA = newm
 }
 
 func (m *Image) randomBrightness(c color.RGBA, max uint8) color.RGBA {
