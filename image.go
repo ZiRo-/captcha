@@ -32,6 +32,8 @@ type Image struct {
 	rng       siprng
 }
 
+var background color.Color = color.RGBA{128, 128, 128, 0xFF}
+
 // NewImage returns a new captcha image of the given width and height with the
 // given digits, where each digit must be in range 0-9.
 func NewImage(id string, digits []byte, width, height int) *Image {
@@ -301,7 +303,12 @@ func (m *Image) distort(amplude float64, period float64) {
 		for y := 0; y < h; y++ {
 			xo := amplude * math.Sin(float64(y)*dx)
 			yo := amplude * math.Cos(float64(x)*dx)
-			newm.Set(x, y, oldm.At(x+int(xo), y+int(yo)))
+			c := oldm.At(x+int(xo), y+int(yo))
+			newm.Set(x, y, c)
+			_,_,_, a := c.RGBA()
+			if a == 0x00 {
+				newm.Set(x, y, background)
+			}
 		}
 	}
 	m.RGBA = newm
