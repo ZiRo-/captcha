@@ -251,7 +251,7 @@ func (m *Image) fillWithDistortCircles(n, maxradius int) {
 	maxy := m.Bounds().Max.Y
 	for i := 0; i < n; i++ {
 		r := m.rng.Int(maxradius/10, maxradius-1)
-		m.colorDistortCircle(m.rng.Int(-r, maxx), m.rng.Int(-r, maxy), r)
+		m.colorDistortCircle(m.rng.Int(0, maxx), m.rng.Int(0, maxy), r)
 	}
 }
 
