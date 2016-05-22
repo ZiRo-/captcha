@@ -1,5 +1,6 @@
 Package captcha
 =====================
+[![GoDoc](https://godoc.org/github.com/ZiRo-/captcha?status.svg)](https://godoc.org/github.com/ZiRo-/captcha)
 
 	import "github.com/ZiRo/captcha"
 
@@ -50,5 +51,5 @@ take a look at the example in github.com/ZiRo-/captcha/capexample
 Examples
 --------
 
-![Image](https://github.com/ZiRo/captcha/raw/master/capgen/example.png)
+![Image](https://github.com/ZiRo-/captcha/raw/master/capgen/example.png)
 
