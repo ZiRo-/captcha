@@ -12,7 +12,7 @@ with a defined length.
 The captcha is a PNG-encoded image with the solution printed on
 it in such a way that makes it hard for computers to solve it using OCR.
 
-This package only requires font files. See github.com/ZiRo-/captcha/fontgen
+This package only requires font files. See [github.com/ZiRo-/captcha/fontgen](https://github.com/ZiRo-/captcha/tree/master/fontgen)
 for details on how to get them.
 So, before you start generating captchas, you have to load a font:
 ``` go
@@ -45,7 +45,7 @@ captcha id.
 Server provides an http.Handler which can serve image and audio
 representations of captchas automatically from the URL. It can also be used
 to reload captchas.  Refer to Server function documentation for details, or
-take a look at the example in github.com/ZiRo-/captcha/capexample
+take a look at the example in [github.com/ZiRo-/captcha/capexample](https://github.com/ZiRo-/captcha/tree/master/capexample)
 
 
 Examples
