@@ -18,9 +18,9 @@ So, before you start generating captchas, you have to load a font:
 ``` go
 font, err := captcha.LoadFontFromFile("UbuntuMono.gob")
 if err != nil {
-	fmt.Println("Couldn't load font file")
+	log.Fatal("Couldn't load font file")
 }
-captcha.AddFont("font", fn)
+captcha.AddFont("font", font)
 ```
 
 To make captchas one-time, the package includes a memory storage that stores
