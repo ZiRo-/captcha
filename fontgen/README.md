@@ -29,3 +29,4 @@ For example:
 ```
 fontgen -font DejaVu-Sans-Mono -size 25 DejaVu-Sans-Mono.gob
 ```
+Two pre-gerated fonts are provided in this repository (TexGyreSchola and UbuntuMono).
