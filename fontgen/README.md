@@ -1,7 +1,7 @@
 #Fontgen
 [![GoDoc](https://godoc.org/github.com/ZiRo-/captcha/fontgen?status.svg)](https://godoc.org/github.com/ZiRo-/captcha/fontgen)
 
-Fontgen generates font files to be used by (github.com/ZiRo/captcha)[https://github.com/ZiRo-/captcha/]
+Fontgen generates font files to be used by [github.com/ZiRo/captcha](https://github.com/ZiRo-/captcha/)
 
 To install, simply run:
 ```
