@@ -4,7 +4,9 @@
 Fontgen generates font files to be used by (github.com/ZiRo/captcha)[https://github.com/ZiRo-/captcha/]
 
 To install, simply run:
-```github.com/ZiRo/captcha```
+```
+go get github.com/ZiRo/captcha
+```
 
 This progam also requires ImageMagick's convert binary.
 
