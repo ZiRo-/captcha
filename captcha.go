@@ -2,23 +2,23 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// Package captcha implements generation and verification of image and audio
+// Package captcha implements generation and verification of image
 // CAPTCHAs.
 //
-// A captcha solution is the sequence of digits 0-9 with the defined length.
-// There are two captcha representations: image and audio.
+// A captcha solution is the sequence of digits 0-9 and letters a-z, A-Z 
+// with a defined length.
 //
-// An image representation is a PNG-encoded image with the solution printed on
+// The captcha is a PNG-encoded image with the solution printed on
 // it in such a way that makes it hard for computers to solve it using OCR.
 //
-// An audio representation is a WAVE-encoded (8 kHz unsigned 8-bit) sound with
-// the spoken solution (currently in English, Russian, and Chinese). To make it
-// hard for computers to solve audio captcha, the voice that pronounces numbers
-// has random speed and pitch, and there is a randomly generated background
-// noise mixed into the sound.
-//
-// This package doesn't require external files or libraries to generate captcha
-// representations; it is self-contained.
+// This package only requires font files. See github.com/ZiRo-/captcha/fontgen
+// for details on how to get them.
+// So, before you start generating captchas, you have to load a font:
+//	font, err := captcha.LoadFontFromFile("UbuntuMono.gob")
+//	if err != nil {
+//		fmt.Println("Couldn't load font file")
+//	}
+//	captcha.AddFont("font", fn)
 //
 // To make captchas one-time, the package includes a memory storage that stores
 // captcha ids, their solutions, and expiration time. Used captchas are removed
@@ -29,7 +29,7 @@
 // ids and solutions in database) by implementing Store interface and
 // registering the object with SetCustomStore.
 //
-// Captchas are created by calling New, which returns the captcha id.  Their
+// Captchas are created by calling New, which returns the captcha id. Their
 // representations, though, are created on-the-fly by calling WriteImage or
 // WriteAudio functions. Created representations are not stored anywhere, but
 // subsequent calls to these functions with the same id will write the same
@@ -42,7 +42,7 @@
 // Server provides an http.Handler which can serve image and audio
 // representations of captchas automatically from the URL. It can also be used
 // to reload captchas.  Refer to Server function documentation for details, or
-// take a look at the example in "capexample" subdirectory.
+// take a look at the example in github.com/ZiRo-/captcha/capexample
 package captcha
 
 import (

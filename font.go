@@ -20,6 +20,8 @@ type Font map[rune][]byte
 var fonts = make(map[string]Font)
 var selectedFont string
 
+// Load a font created by github.com/ZiRo-/captcha/fontgen
+// returns the for usage int AddFont, and an error, if the font can't be loaded.
 func LoadFontFromFile(fname string) (Font, error) {
 	f := make(map[rune][]byte)
 
@@ -32,6 +34,9 @@ func LoadFontFromFile(fname string) (Font, error) {
 	return f, err
 }
 
+// Add a font to the internal list of available fonts.
+// The name is used to select the font later.
+// The first font you add is selected automatically
 func AddFont(name string, f Font) {
 	fonts[name] = f
 	if len(fonts) == 1 {
@@ -39,6 +44,8 @@ func AddFont(name string, f Font) {
 	}
 }
 
+// Select a font by the name it was added with AddFont
+// If no font with that name exists, the selected font remains unchanged
 func SelectFont(name string) {
 	_, ok := fonts[name]
 	if ok {

@@ -21,6 +21,7 @@ const (
 	maxSkew = 0.7
 	// Number of background circles.
 	circleCount = 20
+	// Number of color distortion circles.
 	distortCircleCount = 5
 )
 
@@ -35,7 +36,7 @@ type Image struct {
 var background color.Color = color.RGBA{144, 144, 144, 0xFF}
 
 // NewImage returns a new captcha image of the given width and height with the
-// given digits, where each digit must be in range 0-9.
+// given digits, where each digit must be in range 0-61.
 func NewImage(id string, digits []byte, width, height int) *Image {
 	m := new(Image)
 

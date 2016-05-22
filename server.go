@@ -17,28 +17,23 @@ type captchaHandler struct {
 	imgHeight int
 }
 
-// Server returns a handler that serves HTTP requests with image or
-// audio representations of captchas. Image dimensions are accepted as
+// Server returns a handler that serves HTTP requests with image 
+// of captchas. Image dimensions are accepted as
 // arguments. The server decides which captcha to serve based on the last URL
 // path component: file name part must contain a captcha id, file extension —
-// its format (PNG or WAV).
+// its format (PNG).
 //
 // For example, for file name "LBm5vMjHDtdUfaWYXiQX.png" it serves an image captcha
-// with id "LBm5vMjHDtdUfaWYXiQX", and for "LBm5vMjHDtdUfaWYXiQX.wav" it serves the
-// same captcha in audio format.
+// with id "LBm5vMjHDtdUfaWYXiQX".
 //
 // To serve a captcha as a downloadable file, the URL must be constructed in
 // such a way as if the file to serve is in the "download" subdirectory:
-// "/download/LBm5vMjHDtdUfaWYXiQX.wav".
+// "/download/LBm5vMjHDtdUfaWYXiQX.png".
 //
 // To reload captcha (get a different solution for the same captcha id), append
 // "?reload=x" to URL, where x may be anything (for example, current time or a
 // random number to make browsers refetch an image instead of loading it from
 // cache).
-//
-// By default, the Server serves audio in English language. To serve audio
-// captcha in one of the other supported languages, append "lang" value, for
-// example, "?lang=ru".
 func Server(imgWidth, imgHeight int) http.Handler {
 	return &captchaHandler{imgWidth, imgHeight}
 }
