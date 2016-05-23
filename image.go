@@ -22,7 +22,7 @@ const (
 	// Number of background circles.
 	circleCount = 20
 	// Number of color distortion circles.
-	distortCircleCount = 5
+	distortCircleCount = 3
 )
 
 type Image struct {
@@ -73,7 +73,7 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	
 	m.fillWithDistortCircles(distortCircleCount, width/4)
 	// Apply wave distortion.
-	m.distort(m.rng.Float(5, 10), m.rng.Float(100, 200))
+	m.distort(m.rng.Float(5, 8), m.rng.Float(100, 180))
 	// Fill image with random circles.
 	m.fillWithCircles(circleCount, m.dotSize)
 	return m
@@ -190,21 +190,21 @@ func (m *Image) colorDistortCircle(xc, yc, r int) {
 	d := 2*r
 	r2 := r*r
 	
-	dg := int(m.rng.Intn(120)) - 60
+	dg := int(m.rng.Intn(80)) - 40
 	if dg < 0 {
 		dg -= 10
 	} else {
 		dg += 10
 	}
 	
-	dr := int(m.rng.Intn(120)) - 60
+	dr := int(m.rng.Intn(80)) - 40
 	if dr < 0 {
 		dr -= 10
 	} else {
 		dr += 10
 	}
 	
-	db := int(m.rng.Intn(120)) - 60
+	db := int(m.rng.Intn(80)) - 40
 	if db < 0 {
 		db -= 10
 	} else {
@@ -253,7 +253,7 @@ func (m *Image) fillWithDistortCircles(n, maxradius int) {
 	maxx := m.Bounds().Max.X
 	maxy := m.Bounds().Max.Y
 	for i := 0; i < n; i++ {
-		r := m.rng.Int(maxradius/10, maxradius-1)
+		r := m.rng.Int(maxradius/5, maxradius-1)
 		m.colorDistortCircle(m.rng.Int(0, maxx), m.rng.Int(0, maxy), r)
 	}
 }
