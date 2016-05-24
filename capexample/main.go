@@ -57,6 +57,7 @@ func main() {
 		log.Fatalf("%s", err)
 	}
 	captcha.AddFont("font", fn)
+	captcha.SetCharacterRange(captcha.MODULE_UPPER)
 	
 	http.HandleFunc("/", showFormHandler)
 	http.HandleFunc("/process", processFormHandler)

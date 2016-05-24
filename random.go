@@ -11,6 +11,15 @@ import (
 	"io"
 )
 
+// These constants are used to set the used character ranges in the captcha image
+const (
+	MODULE_DIGIT = 10
+	MODULE_UPPER = 36
+	MODULE_LOWER = 62
+)
+
+var rand_mod byte = MODULE_UPPER
+
 // idLen is a length of captcha id string.
 // (20 bytes of 62-letter alphabet give ~119 bits.)
 const idLen = 20
@@ -35,6 +44,16 @@ const (
 	audioSeedPurpose = 0x02
 )
 
+// Set the desired character ranges for the captcha image. For example:
+//	captcha.SetCharacterRange(captcha.MODULE_LOWER)
+// would use 0-9, A-Z and a-z
+// The default is MODULE_UPPER which means 0-9 and A-Z
+func SetCharacterRange(rang byte) {
+	if rang == MODULE_DIGIT || rang == MODULE_UPPER || rang == MODULE_LOWER {
+		rand_mod = rang
+	}
+}
+
 // deriveSeed returns a 16-byte PRNG seed from rngKey, purpose, id and digits.
 // Same purpose, id and digits will result in the same derived seed for this
 // instance of running application.
@@ -54,10 +73,10 @@ func deriveSeed(purpose byte, id string, digits []byte) (out [16]byte) {
 }
 
 // RandomDigits returns a byte slice of the given length containing
-// pseudorandom numbers in range 0-61. The slice can be used as a captcha
+// pseudorandom numbers in range 0-module. The slice can be used as a captcha
 // solution.
 func RandomDigits(length int) []byte {
-	return randomBytesMod(length, 62)
+	return randomBytesMod(length, rand_mod)
 }
 
 // randomBytes returns a byte slice of the given length read from CSPRNG.

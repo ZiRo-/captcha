@@ -57,10 +57,10 @@ func Digit2Rune(d byte) rune {
 	switch {
 	case 0 <= d && d <= 9:
 		return rune(d) + '0'
-	case 10 <= d && d <= 10+byte('z'-'a'):
-		return rune(d) + 'a' - 10
-	case 11+byte('z'-'a') <= d && d <= 11+byte('z'-'a')+byte('Z'-'A'):
-		return rune(d) - 'z' + 'a' + 'A' - 11
+	case 10 <= d && d <= 10+byte('Z'-'A'):
+		return rune(d) + 'A' - 10
+	case 11+byte('Z'-'A') <= d && d <= 11+byte('Z'-'A')+byte('z'-'a'):
+		return rune(d) - 'Z' + 'A' + 'a' - 11
 	}
 	return 0
 }
@@ -69,10 +69,10 @@ func Rune2Digit(c rune) byte {
 	switch {
 	case '0' <= c && c <= '9':
 		return byte(c - '0')
-	case 'a' <= c && c <= 'z':
-		return byte(c - 'a' + 10)
 	case 'A' <= c && c <= 'Z':
-		return byte(c - 'A' + 'z' - 'a' + 11)
+		return byte(c - 'A' + 10)
+	case 'a' <= c && c <= 'z':
+		return byte(c - 'a' + 'Z' - 'A' + 11)
 	}
 	return 0
 }
