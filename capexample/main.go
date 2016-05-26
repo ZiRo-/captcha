@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/ZiRo-/captcha"
+	"github.com/ZiRo-/captcha/libgocaptcha"
 	"io"
 	"log"
 	"net/http"
@@ -16,8 +17,8 @@ import (
 )
 
 var (
-	flagImgW = flag.Int("width", captcha.StdWidth, "image captcha width")
-	flagImgH = flag.Int("height", captcha.StdHeight, "image captcha height")
+	flagImgW = flag.Int("width", libgocaptcha.StdWidth, "image captcha width")
+	flagImgH = flag.Int("height", libgocaptcha.StdHeight, "image captcha height")
 	fontFile = flag.String("ff", "Monospace.gob", "font file")
 )
 
@@ -52,12 +53,12 @@ func processFormHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 
-	fn, err := captcha.LoadFontFromFile(*fontFile)
-	if err != nil {
-		log.Fatalf("%s", err)
+	fn := libgocaptcha.LoadFontFromFile(*fontFile)
+	if fn == nil {
+		log.Fatalf("Couldn't load font file")
 	}
-	captcha.AddFont("font", fn)
-	captcha.SetCharacterRange(captcha.MODULE_UPPER)
+	libgocaptcha.AddFont("font", fn)
+	libgocaptcha.SetCharacterRange(libgocaptcha.MODULE_UPPER)
 	
 	http.HandleFunc("/", showFormHandler)
 	http.HandleFunc("/process", processFormHandler)

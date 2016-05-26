@@ -48,6 +48,7 @@ package captcha
 import (
 	"bytes"
 	"errors"
+	"github.com/ZiRo-/captcha/libgocaptcha"
 	"io"
 	"time"
 )
@@ -83,8 +84,8 @@ func New() string {
 // NewLen is just like New, but accepts length of a captcha solution as the
 // argument.
 func NewLen(length int) (id string) {
-	id = randomId()
-	globalStore.Set(id, RandomDigits(length))
+	id = libgocaptcha.RandomId()
+	globalStore.Set(id, libgocaptcha.RandomDigits(length))
 	return
 }
 
@@ -99,7 +100,7 @@ func Reload(id string) bool {
 	if old == nil {
 		return false
 	}
-	globalStore.Set(id, RandomDigits(len(old)))
+	globalStore.Set(id, libgocaptcha.RandomDigits(len(old)))
 	return true
 }
 
@@ -110,7 +111,7 @@ func WriteImage(w io.Writer, id string, width, height int) error {
 	if d == nil {
 		return ErrNotFound
 	}
-	_, err := NewImage(id, d, width, height).WriteTo(w)
+	_, err := libgocaptcha.NewImage(id, d, width, height).WriteTo(w)
 	return err
 }
 
@@ -139,7 +140,7 @@ func VerifyString(id string, digits string) bool {
 	}
 	ns := make([]byte, len(digits))
 	for i, d := range digits {
-		ns[i] = Rune2Digit(d)
+		ns[i] = libgocaptcha.Rune2Digit(d)
 	}
 	return Verify(id, ns)
 }

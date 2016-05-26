@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/ZiRo-/captcha"
+	"github.com/ZiRo-/captcha/libgocaptcha"
 	"io"
 	"log"
 	"os"
@@ -16,8 +17,8 @@ import (
 
 var (
 	flagLen  = flag.Int("len", captcha.DefaultLen, "length of captcha")
-	flagImgW = flag.Int("width", captcha.StdWidth, "image captcha width")
-	flagImgH = flag.Int("height", captcha.StdHeight, "image captcha height")
+	flagImgW = flag.Int("width", libgocaptcha.StdWidth, "image captcha width")
+	flagImgH = flag.Int("height", libgocaptcha.StdHeight, "image captcha height")
 	fontFile = flag.String("ff", "Monospace.gob", "font file")
 )
 
@@ -34,11 +35,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fn, err := captcha.LoadFontFromFile(*fontFile)
-	if err != nil {
-		log.Fatalf("%s", err)
+	fn := libgocaptcha.LoadFontFromFile(*fontFile)
+	if fn == nil {
+		log.Fatalf("Couldn't load font file")
 	}
-	captcha.AddFont("font", fn)
+	libgocaptcha.AddFont("font", fn)
 
 	f, err := os.Create(fname)
 	if err != nil {
@@ -46,14 +47,14 @@ func main() {
 	}
 	defer f.Close()
 	var w io.WriterTo
-	d := captcha.RandomDigits(*flagLen)
-	w = captcha.NewImage("", d, *flagImgW, *flagImgH)
+	d := libgocaptcha.RandomDigits(*flagLen)
+	w = libgocaptcha.NewImage("", d, *flagImgW, *flagImgH)
 	_, err = w.WriteTo(f)
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
 	for _, c := range d {
-		fmt.Printf("%c", captcha.Digit2Rune(c))
+		fmt.Printf("%c", libgocaptcha.Digit2Rune(c))
 	}
 	fmt.Println()
 }

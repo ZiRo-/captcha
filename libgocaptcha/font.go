@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package captcha
+package libgocaptcha
 
 import (
 	"encoding/gob"
@@ -15,29 +15,31 @@ const (
 	blackChar  = 1
 )
 
-type Font map[rune][]byte
+type Font struct {
+	data map[rune][]byte
+}
 
-var fonts = make(map[string]Font)
+var fonts = make(map[string]*Font)
 var selectedFont string
 
 // Load a font created by github.com/ZiRo-/captcha/fontgen
 // returns the for usage int AddFont, and an error, if the font can't be loaded.
-func LoadFontFromFile(fname string) (Font, error) {
+func LoadFontFromFile(fname string) *Font {
 	f := make(map[rune][]byte)
 
 	file, err := os.Open(fname)
 	if err != nil {
-		return f, err
+		return nil
 	}
 	dec := gob.NewDecoder(file)
 	err = dec.Decode(&f)
-	return f, err
+	return &Font{f}
 }
 
 // Add a font to the internal list of available fonts.
 // The name is used to select the font later.
 // The first font you add is selected automatically
-func AddFont(name string, f Font) {
+func AddFont(name string, f *Font) {
 	fonts[name] = f
 	if len(fonts) == 1 {
 		SelectFont(name)
@@ -82,5 +84,5 @@ func getChar(d byte) []byte {
 		panic("No font selected")
 	}
 	r := Digit2Rune(d)
-	return fonts[selectedFont][r]
+	return fonts[selectedFont].data[r]
 }

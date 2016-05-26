@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package captcha
+package libgocaptcha
 
 import (
 	"crypto/hmac"
@@ -117,8 +117,8 @@ func randomBytesMod(length int, mod byte) (b []byte) {
 
 }
 
-// randomId returns a new random id string.
-func randomId() string {
+// RandomId returns a new random id string.
+func RandomId() string {
 	b := randomBytesMod(idLen, byte(len(idChars)))
 	for i, c := range b {
 		b[i] = idChars[c]
