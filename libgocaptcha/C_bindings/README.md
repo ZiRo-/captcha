@@ -6,7 +6,7 @@ Once that's done just run
 ```
 $ go get github.com/ZiRo-/captcha/libgocaptcha
 $ git clone https://github.com/ZiRo-/captcha
-$ cd captcha/libgocaptcha/C_bindigs
+$ cd captcha/libgocaptcha/C_bindings
 $ make
 $ sudo make install
 ```
