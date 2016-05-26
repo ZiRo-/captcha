@@ -1,4 +1,4 @@
-#include "libgocaptcha.h"
+#include <gocaptcha/libgocaptcha.h>
 #include <stdio.h>
 #include <stdlib.h>
 
