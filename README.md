@@ -2,6 +2,9 @@ Package captcha
 =====================
 [![GoDoc](https://godoc.org/github.com/ZiRo-/captcha?status.svg)](https://godoc.org/github.com/ZiRo-/captcha)
 
+This is a fork of https://github.com/dchest/captcha
+Original by Dmitry Chestnykh
+
 	import "github.com/ZiRo/captcha"
 
 Package captcha implements generation and verification of image CAPTCHAs.
@@ -16,11 +19,12 @@ This package only requires font files. See [github.com/ZiRo-/captcha/fontgen](ht
 for details on how to get them.
 So, before you start generating captchas, you have to load a font:
 ``` go
-font, err := captcha.LoadFontFromFile("UbuntuMono.gob")
-if err != nil {
-	log.Fatal("Couldn't load font file")
-}
-captcha.AddFont("font", font)
+	fn := libgocaptcha.LoadFontFromFile("Ubuntu-Mono.gob)
+	if fn == nil {
+		log.Fatalf("Couldn't load font file")
+	}
+	libgocaptcha.AddFont("font", fn)
+	libgocaptcha.SetCharacterRange(libgocaptcha.MODULE_UPPER)
 ```
 
 To make captchas one-time, the package includes a memory storage that stores
@@ -33,8 +37,8 @@ ids and solutions in database) by implementing Store interface and
 registering the object with SetCustomStore.
 
 Captchas are created by calling New, which returns the captcha id. Their
-representations, though, are created on-the-fly by calling WriteImage or
-WriteAudio functions. Created representations are not stored anywhere, but
+representations, though, are created on-the-fly by calling WriteImage. 
+Created representations are not stored anywhere, but
 subsequent calls to these functions with the same id will write the same
 captcha solution. Reload function will create a new different solution for
 the provided captcha, allowing users to "reload" captcha if they can't solve
