@@ -24,3 +24,27 @@ extern unsigned char libgocaptcha_rune2digit(unsigned int r);
 extern unsigned int libgocaptcha_digit2rune(unsigned char d);
 extern int libgocaptcha_new_image(char* id, unsigned char* digits, int dlen, int width, int height, unsigned char* buffer, int len);
 ```
+
+## Performance
+
+C implmentation (test.c)
+
+```
+N = 10000
+Avg. time:  0.035416
+Stddev:     0.003913
+Max. time:  0.201672
+Min. time:  0.026584
+```
+
+
+Go implementation (capgen)
+
+```
+N = 10000
+Avg. time:  0.035975
+Stddev:     0.004922
+Max. time:  0.244690
+Min. time:  0.026796
+```
+
